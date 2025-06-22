@@ -4,9 +4,12 @@
     .version = "0.0.0",
     .dependencies = .{
         .godot = .{
-            .url = "git+https://github.com/doubleword-labs/godot-zig.git#751a0778f23d6da36af776e05eaa46f4299c2a20",
-            .hash = "godot-0.0.0-dev-q0GYjglapgCeVKDiJChRHeVKj_SbsH82f06aRQtQtNan",
+            .url = "git+https://github.com/doubleword-labs/godot-zig.git#5e491de6a2f3f8f0bd7935a61016d460c6c7aacf",
+            .hash = "godot-0.0.0-dev-q0GYjgBapgARdyR5XTwY5YFacUIv6yH6PxG8tMDn0e3v",
         },
+        // .godot = .{
+        //     .path = "../godot-zig",
+        // },
     },
     .paths = .{
         "build.zig",

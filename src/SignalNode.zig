@@ -20,25 +20,25 @@ pub fn _bind_methods() void {
 pub fn _enter_tree(self: *Self) void {
     if (godot.Engine.getSingleton().isEditorHint()) return;
 
-    var signal1_btn = godot.initButton();
+    var signal1_btn = godot.Button.init();
     signal1_btn.setPosition(Vec2.new(100, 20), false);
     signal1_btn.setSize(Vec2.new(100, 50), false);
     signal1_btn.setText("Signal1");
     self.base.addChild(signal1_btn, false, godot.Node.INTERNAL_MODE_DISABLED);
 
-    var signal2_btn = godot.initButton();
+    var signal2_btn = godot.Button.init();
     signal2_btn.setPosition(Vec2.new(250, 20), false);
     signal2_btn.setSize(Vec2.new(100, 50), false);
     signal2_btn.setText("Signal2");
     self.base.addChild(signal2_btn, false, godot.Node.INTERNAL_MODE_DISABLED);
 
-    var signal3_btn = godot.initButton();
+    var signal3_btn = godot.Button.init();
     signal3_btn.setPosition(Vec2.new(400, 20), false);
     signal3_btn.setSize(Vec2.new(100, 50), false);
     signal3_btn.setText("Signal3");
     self.base.addChild(signal3_btn, false, godot.Node.INTERNAL_MODE_DISABLED);
 
-    self.color_rect = godot.initColorRect();
+    self.color_rect = godot.ColorRect.init();
     self.color_rect.setPosition(Vec2.new(400, 400), false);
     self.color_rect.setSize(Vec2.new(100, 100), false);
     self.color_rect.setColor(godot.Color.initFromF64F64F64F64(1, 0, 0, 1));

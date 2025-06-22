@@ -27,7 +27,7 @@ const property2_name: [:0]const u8 = "Property2";
 pub fn init(self: *Self) void {
     std.log.info("init {s}", .{@typeName(@TypeOf(self))});
 
-    self.fps_counter = godot.initLabel();
+    self.fps_counter = godot.Label.init();
     self.fps_counter.setPosition(.{ .x = 50, .y = 50 }, false);
     self.base.addChild(self.fps_counter, false, 0);
 }
@@ -93,12 +93,12 @@ pub fn _enter_tree(self: *Self) void {
     if (godot.Engine.getSingleton().isEditorHint()) return;
 
     const window_size = self.base.getTree().?.getRoot().?.getSize();
-    var sp = godot.initHSplitContainer();
+    var sp = godot.HSplitContainer.init();
     sp.setHSizeFlags(godot.Control.SIZE_EXPAND_FILL);
     sp.setVSizeFlags(godot.Control.SIZE_EXPAND_FILL);
     sp.setSplitOffset(@intFromFloat(@as(f32, @floatFromInt(window_size.x)) * 0.2));
     sp.setAnchorsPreset(godot.Control.PRESET_FULL_RECT, false);
-    var itemList = godot.initItemList();
+    var itemList = godot.ItemList.init();
     inline for (0..Examples.len) |i| {
         _ = itemList.addItem(Examples[i].name, null, true);
     }
@@ -109,7 +109,7 @@ pub fn _enter_tree(self: *Self) void {
     godot.connect(sp, "resized", self, "on_resized");
 
     godot.connect(itemList, "item_selected", self, "on_item_focused");
-    self.panel = godot.initPanelContainer();
+    self.panel = godot.PanelContainer.init();
     self.panel.setHSizeFlags(godot.Control.SIZE_FILL);
     self.panel.setVSizeFlags(godot.Control.SIZE_FILL);
     self.panel.setFocusMode(godot.Control.FOCUS_ALL);
