@@ -8,8 +8,9 @@ const Sprite = struct {
     gd_sprite: Godot.Sprite2D,
 };
 const Self = @This();
-pub usingnamespace Godot.Control;
+
 base: Godot.Control,
+rng: std.Random = undefined,
 
 sprites: std.ArrayList(Sprite) = undefined,
 
@@ -18,30 +19,37 @@ pub fn newSpritesNode() *Self {
     self.example_node = null;
 }
 
-pub fn _ready(self: *Self) void {
-    if (Godot.Engine.getSingleton().isEditorHint()) return;
+pub fn randfRange(self: Self, comptime T: type, min: T, max: T) T {
+    const u: T = self.rng.float(T);
+    return u * (max - min) + min;
+}
 
+pub fn _ready(self: *Self) void {
+    const engine = Godot.Engine.getSingleton();
+    if (engine.isEditorHint()) return;
+
+    var prng = std.Random.DefaultPrng.init(@intCast(std.time.timestamp()));
+    self.rng = prng.random();
     self.sprites = std.ArrayList(Sprite).init(Godot.general_allocator);
-    const rnd = Godot.initRandomNumberGenerator();
-    defer _ = Godot.unreference(rnd);
 
     const resource_loader = Godot.ResourceLoader.getSingleton();
     const tex = resource_loader.load("res://textures/logo.png", "", Godot.ResourceLoader.CACHE_MODE_REUSE);
     defer _ = Godot.unreference(tex.?);
-    const sz = self.getParentAreaSize();
+
+    const sz = self.base.getParentAreaSize();
 
     for (0..10000) |_| {
-        const s: f32 = @floatCast(rnd.randfRange(0.1, 0.2));
+        const s: f32 = self.randfRange(f32, 0.1, 0.2);
         const spr = Sprite{
-            .pos = Vec2.new(@floatCast(rnd.randfRange(0, sz.x)), @floatCast(rnd.randfRange(0, sz.y))),
-            .vel = Vec2.new(@floatCast(rnd.randfRange(-1000, 1000)), @floatCast(rnd.randfRange(-1000, 1000))),
+            .pos = Vec2.new(self.randfRange(f32, 0, sz.x), self.randfRange(f32, 0, sz.y)),
+            .vel = Vec2.new(self.randfRange(f32, -1000, 1000), self.randfRange(f32, -1000, 1000)),
             .scale = Vec2.set(s),
             .gd_sprite = Godot.initSprite2D(),
         };
         spr.gd_sprite.setTexture(tex);
-        spr.gd_sprite.setRotation(rnd.randfRange(0, 3.14));
+        spr.gd_sprite.setRotation(self.randfRange(f32, 0, std.math.pi));
         spr.gd_sprite.setScale(spr.scale);
-        self.addChild(spr.gd_sprite, false, Godot.Node.INTERNAL_MODE_DISABLED);
+        self.base.addChild(spr.gd_sprite, false, Godot.Node.INTERNAL_MODE_DISABLED);
         self.sprites.append(spr) catch unreachable;
     }
 }
@@ -51,7 +59,7 @@ pub fn _exit_tree(self: *Self) void {
 }
 
 pub fn _physics_process(self: *Self, delta: f64) void {
-    const sz = self.getParentAreaSize(); //get_size();
+    const sz = self.base.getParentAreaSize(); //get_size();
 
     for (self.sprites.items) |*spr| {
         const pos = spr.pos.add(spr.vel.scale(@floatCast(delta)));
