@@ -1,6 +1,5 @@
 const std = @import("std");
 const godot = @import("godot");
-const builtin = @import("builtin");
 const GPA = std.heap.GeneralPurposeAllocator(.{});
 
 var gpa = GPA.init;

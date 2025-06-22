@@ -1,6 +1,5 @@
 const std = @import("std");
 const godot = @import("godot");
-const Vec2 = godot.Vector2;
 const Vec3 = godot.Vector3;
 const SpritesNode = @import("SpriteNode.zig");
 const GuiNode = @import("GuiNode.zig");
