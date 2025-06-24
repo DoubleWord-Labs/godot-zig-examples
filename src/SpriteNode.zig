@@ -1,21 +1,18 @@
-const std = @import("std");
-const Godot = @import("godot");
-const Vec2 = Godot.Vector2;
-const Sprite = struct {
-    pos: Vec2,
-    vel: Vec2,
-    scale: Vec2,
-    gd_sprite: Godot.Sprite2D,
-};
 const Self = @This();
 
-base: Godot.Control,
+base: Control,
 rng: std.Random = undefined,
-
 sprites: std.ArrayList(Sprite) = undefined,
 
+const Sprite = struct {
+    pos: Vector2,
+    vel: Vector2,
+    scale: Vector2,
+    gd_sprite: Sprite2D,
+};
+
 pub fn newSpritesNode() *Self {
-    var self = Godot.create(Self);
+    var self = godot.create(Self);
     self.example_node = null;
 }
 
@@ -25,31 +22,31 @@ pub fn randfRange(self: Self, comptime T: type, min: T, max: T) T {
 }
 
 pub fn _ready(self: *Self) void {
-    const engine = Godot.Engine.getSingleton();
+    const engine = Engine.getSingleton();
     if (engine.isEditorHint()) return;
 
     var prng = std.Random.DefaultPrng.init(@intCast(std.time.timestamp()));
     self.rng = prng.random();
-    self.sprites = std.ArrayList(Sprite).init(Godot.general_allocator);
+    self.sprites = std.ArrayList(Sprite).init(godot.general_allocator);
 
-    const resource_loader = Godot.ResourceLoader.getSingleton();
-    const tex = resource_loader.load("res://textures/logo.png", "", Godot.ResourceLoader.CACHE_MODE_REUSE);
-    defer _ = Godot.unreference(tex.?);
+    const resource_loader = ResourceLoader.getSingleton();
+    const tex = resource_loader.load("res://textures/logo.png", "", ResourceLoader.CACHE_MODE_REUSE);
+    defer _ = godot.unreference(tex.?);
 
     const sz = self.base.getParentAreaSize();
 
     for (0..10000) |_| {
         const s: f32 = self.randfRange(f32, 0.1, 0.2);
         const spr = Sprite{
-            .pos = Vec2.new(self.randfRange(f32, 0, sz.x), self.randfRange(f32, 0, sz.y)),
-            .vel = Vec2.new(self.randfRange(f32, -1000, 1000), self.randfRange(f32, -1000, 1000)),
-            .scale = Vec2.set(s),
-            .gd_sprite = Godot.initSprite2D(),
+            .pos = Vector2.new(self.randfRange(f32, 0, sz.x), self.randfRange(f32, 0, sz.y)),
+            .vel = Vector2.new(self.randfRange(f32, -1000, 1000), self.randfRange(f32, -1000, 1000)),
+            .scale = Vector2.set(s),
+            .gd_sprite = Sprite2D.init(),
         };
         spr.gd_sprite.setTexture(tex);
         spr.gd_sprite.setRotation(self.randfRange(f32, 0, std.math.pi));
         spr.gd_sprite.setScale(spr.scale);
-        self.base.addChild(spr.gd_sprite, false, Godot.Node.INTERNAL_MODE_DISABLED);
+        self.base.addChild(spr.gd_sprite, false, Node.INTERNAL_MODE_DISABLED);
         self.sprites.append(spr) catch unreachable;
     }
 }
@@ -79,3 +76,12 @@ pub fn _physics_process(self: *Self, delta: f64) void {
         spr.gd_sprite.setPosition(spr.pos);
     }
 }
+
+const std = @import("std");
+const godot = @import("godot");
+const Control = godot.core.Control;
+const Engine = godot.core.Engine;
+const Node = godot.core.Node;
+const ResourceLoader = godot.core.ResourceLoader;
+const Sprite2D = godot.core.Sprite2D;
+const Vector2 = godot.Vector2;
